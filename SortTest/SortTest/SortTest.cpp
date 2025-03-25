@@ -1,48 +1,110 @@
 
+#include "Sort.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
+#include <time.h>
+#include <stdlib.h>
 
-#define PARAMNO 3
-#define MAX 50
+#define DEBUG
+#define PARAMNO 2
+#define DEBUGMAX 50
 #define NL 10
 
-/*2. w pliku z main() zdefiniowac typ wskaznikowy na funkcje sortujace !! typedef int (*pFType)()
-3. w main() zdefiniowac lokalna tablice pSortTab (bez rozmiaru - []) i zainicjowana
-od razu na adresy funkcji sortujacych (nazwy)
-4. w main() zdefiniowac tablice napisow - nazw tych sortowan (do wypisywania)
-*/
+//done 2. w pliku z main() zdefiniowac typ wskaznikowy na funkcje sortujace !! typedef int (*pFType)()
+//done 3. w main() zdefiniowac lokalna tablice pSortTab (bez rozmiaru - []) i zainicjowana od razu na adresy funkcji sortujacych (nazwy)
+//done 4. w main() zdefiniowac tablice napisow - nazw tych sortowan (do wypisywania)
 
 void initTab( int* pTab, int nSize );
 void printTab( int* pTab, int nSize );
 int createTab( int**, int );
 
 // argc - rozmiar tablicy argV >= 1
-// argV[0] zawsze jest nazwa programu, elem argV sa stringi (lancuchy znakowe)
+//! argV[0] zawsze jest nazwa programu, elem argV sa stringi (lancuchy znakowe)
 int main( int argc, char* argv[] )
 { 
   //sprawdzic parametry
+  if( argc != PARAMNO ) //musz¹ byæ 2 - nazwa + size
+  {
+    printf( "Usage: %s <Size of table>\n", argv[0] );
+    return 1;
+  }
+  
   //obliczyc rozmiar tablicy
+  int tabsize = atoi( argv[1] );
 
   //alokacja tablicy wzorcowej i jej zainicjowanie (funkje)
+  int* pTab = NULL;
+  if( !createTab( &pTab, tabsize ) )  {
+    printf( "Memory allocation error! - pTab\n" );
+    return 2;
+  }
 
-  // wydruk na warunkowej kompil
+  initTab(pTab, tabsize);
+  printf( "Elements to sort: %d\n", tabsize );
+
+  typedef void (*pFType)(int*, int); //! wskaŸnik do tablicy przyjmuj¹cej int* tablicê oraz int rozmiar
+  
+  pFType pSortTab[] = {simpleInsertion, bubbleSort, simpleSelection}; //tablica wskaŸników
+  const char* tabNames[] = {"simpleInsertion", "bubbleSort", "simpleSelection"};
+
+
+
+  //! wydruk na warunkowej kompil
+  // Dla testow nalezy na warunkowej kopilacji wypisac np pierwzych 50 elementow (po 10 w linii)
+  // funkcja Testowo (warunk kompil) wypisac przed i po sortow - testowac dla malych tablic np 20 elem - czy samo sortowanie dziala
+
+#ifdef DEBUG
+  printf("Tab before sort:\n");
+  int temp;
+  if( tabsize < DEBUGMAX ) temp = tabsize; else temp = DEBUGMAX;
+  printTab(pTab, temp);
+#endif // DEBUG
 
 
   //----------odczytac czasy poszczegolnych sortowan
 
-  // alokacja pamieci na tabl do sortow
-  // obliczyc rozmiar tablicy adresoww funkcji
+  //! alokacja pamieci na tabl do sortow
+  int* pCpTab = NULL;
+  if( !createTab( &pCpTab, tabsize ) )
+  {
+    printf( "Memory allocation error! - pCpTable" );
+    return 3;
+  }
+  
+  // obliczyc rozmiar tablicy adresow funkcji
+  int iterations = sizeof( pSortTab )/sizeof( pFType ); //!wielkoœæ tablicy/wielkoœæ elementów
+  
+  /* 5. Zainicjowac losowo dynamicznie stworzona tablice wzorcowa o rozmiarze przekazanym przez 
+    parametr fun main(), ktora bedzie kopiowana (memcpy() -<memory.h>) przed kazdym sortowaniem
+    do tablicy sortowanej i w petli sortowac ja  i wypisac nazwe sortowania i ile czasu zajmuje.
+    Do pomiaru czasu tylko jedna zmienna (czas przed rozpoczeciem sortowania)
+    Oczywiscie sortowania sa wywolywane poprzez tablice adresow do funkcji!!!!*/
 
   //TO W PETLI for
   // wkopiowanie do niej tabl wzorcowej
+  for (int i = 0; i <iterations; i++) 
+  {
+    memcpy( pCpTab, pTab, sizeof(int)+tabsize); 
 
   // -- odczytac czas  clock()
+  clock_t start = clock();
   // -- posortowac
+  pSortTab[i]( pCpTab, tabsize );
   // -- odczytac czas i wypisac czas sortowania (wzor w helpach), wypisac nazwe srtowania
+  clock_t end = clock();
+  printf( "\nMetoda: %s, czas: %lf sekund, %0.2lf milisekund\n", 
+    tabNames[i], (double)( end - start ) / CLOCKS_PER_SEC, (double)( end - start ) / CLOCKS_PER_SEC * 1000  );
+  //! lub ((clock_t)1000) i ((clock_t)1000) * 1000)
+  
   // -- na warunkowej kompilacji wydruk posortowanej
-
+#ifdef DEBUG
+  printf("Tab after sort:\n");
+  printTab(pTab, temp);
+#endif
+  }
   // zwolnic pamiec
+  free(pTab);
 
   return 0;
 }

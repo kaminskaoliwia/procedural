@@ -15,7 +15,7 @@ void simpleInsertion( int* tab, int nSize )
 	}  
 }
 
-void simpleSelection()
+void simpleSelection( int* tab, int nSize )
 {
 	for( int i = 0; i < nSize - 1; i++ )
 	{
@@ -32,7 +32,7 @@ void simpleSelection()
 	}
 }
 
-void bubbleSort()
+void bubbleSort( int* tab, int nSize )
 {
 	for( int i = 1; i < nSize; i++ )
 		for( int j = nSize - 1; j >= i; j-- )
