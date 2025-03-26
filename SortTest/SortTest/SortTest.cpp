@@ -45,10 +45,8 @@ int main( int argc, char* argv[] )
 
   typedef void (*pFType)(int*, int); //! wskaŸnik do tablicy przyjmuj¹cej int* tablicê oraz int rozmiar
   
-  pFType pSortTab[] = {simpleInsertion, bubbleSort, simpleSelection}; //tablica wskaŸników
-  const char* tabNames[] = {"simpleInsertion", "bubbleSort", "simpleSelection"};
-
-
+  pFType pSortTab[] = {simpleInsertion, bubbleSort, simpleSelection, mixSort, heapSort, quickSort, halfSort}; //tablica wskaŸników
+  const char* tabNames[] = {"simpleInsertion", "bubbleSort", "simpleSelection", "mixSort", "heapSort", "quickSort", "halfSort"};
 
   //! wydruk na warunkowej kompil
   // Dla testow nalezy na warunkowej kopilacji wypisac np pierwzych 50 elementow (po 10 w linii)
@@ -85,7 +83,7 @@ int main( int argc, char* argv[] )
   // wkopiowanie do niej tabl wzorcowej
   for (int i = 0; i <iterations; i++) 
   {
-    memcpy( pCpTab, pTab, sizeof(int)+tabsize); 
+    memcpy( pCpTab, pTab, sizeof(int)*tabsize); 
 
   // -- odczytac czas  clock()
   clock_t start = clock();
@@ -100,12 +98,11 @@ int main( int argc, char* argv[] )
   // -- na warunkowej kompilacji wydruk posortowanej
 #ifdef DEBUG
   printf("Tab after sort:\n");
-  printTab(pTab, temp);
+  printTab(pCpTab, temp);
 #endif
   }
   // zwolnic pamiec
   free(pTab);
-
   return 0;
 }
 
@@ -133,6 +130,6 @@ void initTab( int* pTab, int nSize )
   srand((unsigned int)time(NULL));
   for( int i=0;i< nSize; i++ )
   {
-    *pTab = rand() % nSize;
+    pTab[i] = rand() % nSize;
   }
 }
