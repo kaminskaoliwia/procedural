@@ -41,7 +41,6 @@ int main( int argc, char* argv[] )
   }
 
   initTab(pTab, tabsize);
-  printf( "Elements to sort: %d\n", tabsize );
 
   typedef void (*pFType)(int*, int); //! wskaŸnik do tablicy przyjmuj¹cej int* tablicê oraz int rozmiar
   
