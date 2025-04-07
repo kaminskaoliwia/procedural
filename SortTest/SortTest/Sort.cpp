@@ -44,44 +44,46 @@ void bubbleSort( int* tab, int nSize )
 			}
 }
 
-void mixSort( int* tab, int nSize )
+void mixSort( int* tab, int nSize ) // cocktail sort - bubble sort "od dwóch stron"
 {
-	int l = 1;
-	int p = nSize - 1;
-	int k = nSize - 1;
+	int start = 1; // pocz¹tek
+	int end = nSize - 1; // koniec
+	int last = nSize - 1; // ostatnia pozycja, na której nast¹pi³a zmiana
 	do
 	{
-		for( int j = p; j >= l; j-- )
-			if( tab[j - 1] > tab[j] )
+		for( int j = end; j >= start; j-- ) // przechodzimy od koñca do pocz¹tku
+			if( tab[j - 1] > tab[j] ) // jeœli element po lewej wiêkszy - zamieniamy
 			{
-				int temp = tab[j - 1];
+				int temp = tab[j - 1]; 
 				tab[j - 1] = tab[j];
 				tab[j] = temp;
-				k = j;
+				last = j; // zapamiêtujemy ostatnie miejsce
 			}
-		l = k + 1;
-		for( int j = l; j < p; j++ )
-			if( tab[j - 1] > tab[j] )
-			{
-				int temp = tab[j - 1];
-				tab[j - 1] = tab[j];
-				tab[j] = temp;
-				k = j;
-			}
-		p = k - 1;
 
-	}while( l <= p );
+		start = last + 1; // bo wczeœniejsze s¹ ju¿ posortowane
+		
+		for( int j = start; j < end; j++ ) // idziemy od pocz¹tku
+			if( tab[j - 1] > tab[j] ) 
+			{
+				int temp = tab[j - 1];
+				tab[j - 1] = tab[j];
+				tab[j] = temp;
+				last = j;
+			}
+		end = last - 1; // na koñcu jest ju¿ posortowane
+
+	}while( start <= end ); // robimy dopóki dalej istnieje przedzia³
 }
 
 void halfSort( int* tab, int nSize )
 {
-	for( int i = 1; i < nSize; i++ )
+	for( int i = 1; i < nSize; i++ ) // tab[0] traktujemy jako posortowany
 	{
-		int temp = tab[i];
-		int l = 0;
+		int temp = tab[i]; // aktualna liczba której miejsca szukamy
+		int l = 0; // zakres szukania
 		int p = i - 1;
 
-		while( l <= p )
+		while( l <= p )	// podobnie jak w wyszukiwaniu po³ówkowym
 		{
 			int m = ( l + p ) / 2;
 			if( tab[m] > temp )
@@ -90,80 +92,81 @@ void halfSort( int* tab, int nSize )
 				l = m + 1;
 		}
 
-		for( int j = i - 1; j >= l; j-- )
+		for( int j = i - 1; j >= l; j-- ) // przesuwamy elementy wiêksze w prawo, aby wstawiæ temp
 			tab[j + 1] = tab[j];
 
-		tab[l] = temp;
+		tab[l] = temp; // wstawiamy temp
 	}
 }
 
 void quickSort( int* tab, int nSize )
 {
-	sort( tab, 0, nSize - 1 );
+	sort( tab, 0, nSize - 1 ); // funkcja pomocnicza
 }
 
-void sort( int* tab, int l, int p )
+void sort( int* tab, int start, int end )
 {
-	int i = l;
-	int j = p;
-	int temp = tab[ ( l + p ) / 2 ];
+	int i = start;
+	int j = end;
+	int pivot = tab[ ( start + end ) / 2 ]; // œrodek tablicy
 	do
 	{
-		while( tab[i] < temp ) i++;
-		while( temp < tab[j] ) j--;
+		// szukamy elementow i - wiekszych, j - mniejszych
+		while( tab[i++] < pivot ); 
+		while( pivot < tab[j--] );
+		// zamieniamy miejscami
 		if( i <= j )
 		{
 			int w = tab[i];
-			tab[i] = tab[j];
-			tab[j] = w;
-			i++;
-			j--;
+			tab[i++] = tab[j];
+			tab[j--] = w;
 		}
 
-	} while( j >= i );
+	} while( j >= i ); // trwa dopóki siê nie przetn¹
 
-	if( l < j ) sort( tab, l, j );
-	if( i < p ) sort( tab, i, p );
+	if( start < j ) sort( tab, start, j ); // rekurencyjnie sortujemy lew¹ czêœæ
+	if( i < end ) sort( tab, i, end ); // rekurencyjnie sortujemy praw¹ czêœæ
 }
 
 void heapSort( int* tab, int nSize )
 {
-	int l = nSize / 2;
-	int p = nSize - 1;
+	int l = nSize / 2; // ostatni wêze³ (drugi tier) 
+	int p = nSize - 1; // indeks ostatniego elem tab
 
-	/*while( l-- > 0 )
-	update( l, p, tab );
-	*/
+	for( int i = l-1; i >= 0; i-- )
+		heapify( i, p, tab ); // funkcja pomocniczna
 
-	for( int i = l-1; i > 0; i-- )
-		update( i, p, tab );
-
-	for( int i = p; i>0; i-- )
+	for( int i = p; i>0; i-- ) // po build maxHeap sortujemy
 	{
-		int temp = tab[0];
+		int temp = tab[0]; // najwiekszy element kopca zamieniamy z ostatnim
 		tab[0] = tab[i];
 		tab[i] = temp;
-		update( 0, i-1, tab );
+		heapify( 0, i-1, tab ); // nie bierzemy pod uwage juz najwiekszego elementu, zostal wyrzucony
 	}
 }
 
-void update( int l, int p, int* tab )
-{
-	if( l==p ) return;
-	int i = l;
-	int j = 2 * i + 1;
-	int temp = tab[i];
-	while( j <= p )
+void heapify( int l, int p, int* tab )  // l - rodzic, p - ostatni elem kopca
+{	
+	// heapify - building max heap, szukanie najwiekszej wartosc na góre
+	if( l==p ) return; // wêze³ nie ma dzieci
+	int i = l; // i = l - parent
+	int j = 2 * i + 1; // lewe dziecko wêz³a i w kopcu
+	int temp = tab[i]; // wartoœæ rodzica
+	
+	while( j <= p ) // gdy dziecko <= rodzic
 	{
-		if( j < p )
-			if( tab[j] <= tab[j + 1] ) 
-				j++;
+		if( j < p ) // je¿eli dziecko < rodzic
+			if( tab[j] <= tab[j + 1] ) //! pytanie czy mo¿na to j++ tu wstawiæ
+				j++;	// wybieramy wiêksze dziecko = lewe lub prawe
 
-		if( tab[j] < temp )
-			break;
-		tab[i] = tab[j];
-		i = j;
-		j = 2 * i + 1;
+		if( tab[j] < temp ) 
+			break;	/* sprawdzamy czy wiêksze dziecko jest mniejsze od rodzica
+			je¿eli tak to wszystko jest okej i koñczymy, je¿eli nie to musimy
+			zamieniæ rodzica z dzieckiem */
+		
+		tab[i] = tab[j]; // zamieniamy dziecko z rodzicem
+		i = j;	// nowy rodzic
+		j = 2 * i + 1; // nowe lewe dziecko, prawe to 2*i+2
 	}
-	tab[i] = temp;
+	tab[i] = temp; // wstawiamy zapamiêtan¹ wartoœæ rodzica na jego nowe (je¿eli zamieniliœmy) miejsce
 }
