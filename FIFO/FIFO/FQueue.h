@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct tagFQItem
+typedef struct tagFQItem //definiuje strukture 
 { 
   int key;
   tagFQItem* pNext;

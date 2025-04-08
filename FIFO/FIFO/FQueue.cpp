@@ -3,45 +3,50 @@
 
 FQueue* FQCreate()                    // queue initiating  (NULL - fail)
 {
-  FQueue* pNew = (FQueue*)malloc(sizeof(FQueue) );
-  if( !pNew )
+  FQueue* pNew = ( FQueue*)malloc(sizeof(FQueue) ); // alokuje pamiêæ, pierwszy pusty wskaŸnik
+  if( !pNew ) // je¿eli nie ma miejsce
   {
     return NULL;
   }
-  pNew->pHead = pNew->pTail = NULL;
+  pNew->pHead = pNew->pTail = NULL; // wskaŸnik pNew wskazuj¹cy na pHead/pTail = NULL
 
-  return pNew;
+  return pNew; // returnuje pNew typu wskaŸnik do FQueue
 }
 
-int     FQEmpty( FQueue* q )          // if FIFO empty returned 1 else 0
+int FQEmpty(FQueue* q) // if FIFO empty returned 1 else 0
 {
-  return !q || !(q->pHead);
+  return !q || !(q->pHead); /* FQueue* = wskaŸnik do struktury danych kolejki
+    !q, sprawdza czy wgl istnieje, a q->pHead sprawdza czy s¹ dane (kolejka mog³a zostaæ utworzona
+    ale niedodane zosta³y ¿adne dane)
+
+    Strza³ka ma w celu dostanie siê do pHead przez wskaŸnik do struktury q, równowa¿ne jest:
+    (*q).pHead
+  */
 }
 
 int    FQEnqueue( FQueue* q, int x ) // insert new item at the end
 {
-  if( !q ) return 0;
+  if( !q ) return 0; // je¿eli kolejka nie istnieje to nie
 
-  //todo memory allocation
+  //! memory allocation
   FQItem* pNew = (FQItem*)malloc(sizeof(FQItem) );
-  if( !pNew ) {
+  if( !pNew ) { // je¿eli nie ma miejsca
     return 0;
   }
 
-  //! przewi¹zaæ pTail na NewItem u¿ywaj¹c pNew
-  pNew-> key = x;
-  pNew-> pNext = NULL; // jako, ¿e dodajemy na koniec, nastêpny musi byæ pusty
+  pNew-> key = x; // nowy int k = x
+  pNew-> pNext = NULL; // jako, ¿e dodajemy na koniec, nastêpny wskaŸnik musi byæ pusty
 
-  if( q->pHead == NULL)
+  if( q->pHead == NULL) // je¿eli nie ma ¿adnego member 
   {
-    q-> pHead = pNew;
+    q-> pHead = pNew; // to nasz nowy member jest wskazywany na przez pHead
   }
   else
   {
-    q->pTail->pNext = pNew; //! nastêpny to nowy
+    q->pTail->pNext = pNew; // (*q).pTail.pNext = pNew
   }
 
-  q->pTail = pNew; //! tail pointer na nowy 
+  q->pTail = pNew; // (*q).pTail = pNew
 }
 
 int     FQDequeue( FQueue* q )        //! take out the first item
@@ -51,16 +56,17 @@ int     FQDequeue( FQueue* q )        //! take out the first item
     return 0;
   }
 
-  FQItem* temp = q->pHead;
-  int value = temp->key;
-  q->pHead = q->pHead->pNext; 
+  FQItem* temp = q->pHead; // tworzymy nowy skaŸnik na pHead o nazwie temp
+  int value = temp->key; // pobieramy wartoœæ key z tempa i nazywamy t¹ wartoœæ value
+  q->pHead = q->pHead->pNext; /* (*q).pHead = (*q).pHead.pNext, czyli naszym nowym pHead
+                                   nastêpna wartoœæ*/
 
   if (!q->pHead) {  // je¿eli kolejka stanie siê pusta
-    q->pTail = NULL; 
+    q->pTail = NULL; // (*q).pTail staje siê pusta
   }
-  free(temp);
+  free(temp); // zwalniamy pamiêæ z tempa
 
-  return value; 
+  return value; // wartoœæ ju¿ usuniêtej wartoœci, która kiedyœ by³a pHead
 }
 
 void    FQClear( FQueue* q )          // clears the queue
@@ -76,7 +82,7 @@ void    FQClear( FQueue* q )          // clears the queue
 void    FQRemove( FQueue** q )         // clears the queue  (=QFClear()) and removes
 {
   FQClear( *q );
-  free( *q );
+  free( *q ); // zwalnia wskaŸnik q       
 }
 
 void    FQDel( FQueue* q )             //! removes only first item
