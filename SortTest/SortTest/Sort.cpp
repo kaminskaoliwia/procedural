@@ -134,18 +134,18 @@ void heapSort( int* tab, int nSize )
 	int p = nSize - 1; // indeks ostatniego elem tab
 
 	for( int i = l-1; i >= 0; i-- )
-		heapify( i, p, tab ); // funkcja pomocniczna
+		update( i, p, tab ); // funkcja pomocniczna
 
 	for( int i = p; i>0; i-- ) // po build maxHeap sortujemy
 	{
 		int temp = tab[0]; // najwiekszy element kopca zamieniamy z ostatnim
 		tab[0] = tab[i];
 		tab[i] = temp;
-		heapify( 0, i-1, tab ); // nie bierzemy pod uwage juz najwiekszego elementu, zostal wyrzucony
+		update( 0, i-1, tab ); // nie bierzemy pod uwage juz najwiekszego elementu, zostal wyrzucony
 	}
 }
 
-void heapify( int l, int p, int* tab )  // l - rodzic, p - ostatni elem kopca
+void update( int l, int p, int* tab )  // l - rodzic, p - ostatni elem kopca
 {	
 	// heapify - building max heap, szukanie najwiekszej wartosc na góre
 	if( l==p ) return; // wêze³ nie ma dzieci
