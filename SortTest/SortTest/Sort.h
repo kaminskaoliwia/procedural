@@ -11,7 +11,6 @@ void mixSort( int* tab, int nSize );
 void halfSort( int* tab, int nSize );
 void quickSort( int* tab, int nSize );
 void heapSort( int* tab, int nSize );
-void sort( int* tab, int l, int p );
-void update( int l, int p, int* tab );
+
 
 #endif

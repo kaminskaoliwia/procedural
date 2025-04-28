@@ -19,6 +19,9 @@ void initTab( int* pTab, int nSize );
 void printTab( int* pTab, int nSize );
 int createTab( int**, int );
 
+typedef void ( *pFType)(int*, int ); //! wskaŸnik do tablicy przyjmuj¹cej int* tablicê oraz int rozmiar
+
+
 // argc - rozmiar tablicy argV >= 1
 //! argV[0] zawsze jest nazwa programu, elem argV sa stringi (lancuchy znakowe)
 int main( int argc, char* argv[] )
@@ -40,9 +43,8 @@ int main( int argc, char* argv[] )
     return 2;
   }
 
-  initTab(pTab, tabsize);
+  initTab( pTab, tabsize );
 
-  typedef void (*pFType)(int*, int); //! wskaŸnik do tablicy przyjmuj¹cej int* tablicê oraz int rozmiar
   
   pFType pSortTab[] = {simpleInsertion, bubbleSort, simpleSelection, mixSort, heapSort, quickSort, halfSort}; //tablica wskaŸników
   const char* tabNames[] = {"simpleInsertion", "bubbleSort", "simpleSelection", "mixSort", "heapSort", "quickSort", "halfSort"};
@@ -52,10 +54,10 @@ int main( int argc, char* argv[] )
   // funkcja Testowo (warunk kompil) wypisac przed i po sortow - testowac dla malych tablic np 20 elem - czy samo sortowanie dziala
 
 #ifdef DEBUG
-  printf("Tab before sort:\n");
-  int temp;
-  if( tabsize < DEBUGMAX ) temp = tabsize; else temp = DEBUGMAX;
-  printTab(pTab, temp);
+  printf( "Tab before sort:\n" );
+  //int temp;
+ // if( tabsize < DEBUGMAX ) temp = tabsize; else temp = DEBUGMAX;
+  printTab(pTab, ( tabsize < DEBUGMAX )? tabsize: DEBUGMAX );
 #endif // DEBUG
 
 
@@ -80,9 +82,9 @@ int main( int argc, char* argv[] )
 
   //TO W PETLI for
   // wkopiowanie do niej tabl wzorcowej
-  for (int i = 0; i <iterations; i++) 
+  for ( int i = 0; i <iterations; i++ ) 
   {
-    memcpy( pCpTab, pTab, sizeof(int)*tabsize); 
+    memcpy( pCpTab, pTab, sizeof(int)*tabsize ); 
 
   // -- odczytac czas  clock()
   clock_t start = clock();
@@ -96,18 +98,18 @@ int main( int argc, char* argv[] )
   
   // -- na warunkowej kompilacji wydruk posortowanej
 #ifdef DEBUG
-  printf("Tab after sort:\n");
-  printTab(pCpTab, temp);
+  printf( "Tab after sort:\n" );
+  printTab( pCpTab,  ( tabsize < DEBUGMAX )? tabsize: DEBUGMAX );
 #endif
   }
   // zwolnic pamiec
-  free(pTab);
+  free( pTab );
   return 0;
 }
 
 int createTab( int** pTab, int nSize )
 {
-  *pTab = (int*)malloc( nSize*sizeof(int) );
+  *pTab = ( int*)malloc( nSize*sizeof(int) );
   if( !*pTab ) // if( *pTab = NULL )
     return 0;
   // wyzerowac tablice, do tego nigdy nie uzywac petli (np for)
@@ -120,13 +122,13 @@ void printTab( int* pTab, int nSize )
   for( int i=0; i<nSize; i++ /*, pTab++*/)
   {
     printf("%d ", *pTab++ ); //co 10 linie nl  // *( pTab + i*sizeof(int) );
-    if(((i+1) % NL) == 0) printf("\n");  
+    if( ((i+1) % NL) == 0 ) printf( "\n" );  
   }
 }
 
 void initTab( int* pTab, int nSize ) 
 {
-  srand((unsigned int)time(NULL));
+  srand( (unsigned int)time(NULL) );
   for( int i=0;i< nSize; i++ )
   {
     pTab[i] = rand() % nSize;

@@ -1,6 +1,9 @@
 
 #include "Sort.h"
 
+void sort( int* tab, int l, int p );
+void update( int l, int p, int* tab );
+
 void simpleInsertion( int* tab, int nSize )
 {
 	for( int i = 1; i < nSize; i++ )
@@ -112,8 +115,8 @@ void sort( int* tab, int start, int end )
 	do
 	{
 		// szukamy elementow i - wiekszych, j - mniejszych
-		while( tab[i++] < pivot ); 
-		while( pivot < tab[j--] );
+		while( tab[i] < pivot ) i++; 
+		while( pivot < tab[j] ) j--;
 		// zamieniamy miejscami
 		if( i <= j )
 		{
@@ -136,19 +139,19 @@ void heapSort( int* tab, int nSize )
 	for( int i = l-1; i >= 0; i-- )
 		update( i, p, tab ); // funkcja pomocniczna
 
-	for( int i = p; i>0; i-- ) // po build maxHeap sortujemy
+	for( ; p>0; p-- ) // po build maxHeap sortujemy
 	{
 		int temp = tab[0]; // najwiekszy element kopca zamieniamy z ostatnim
-		tab[0] = tab[i];
-		tab[i] = temp;
-		update( 0, i-1, tab ); // nie bierzemy pod uwage juz najwiekszego elementu, zostal wyrzucony
+		tab[0] = tab[p];
+		tab[p] = temp;
+		update( 0, p-1, tab ); // nie bierzemy pod uwage juz najwiekszego elementu, zostal wyrzucony
 	}
 }
 
 void update( int l, int p, int* tab )  // l - rodzic, p - ostatni elem kopca
 {	
 	// heapify - building max heap, szukanie najwiekszej wartosc na góre
-	if( l==p ) return; // wêze³ nie ma dzieci
+	if( l>=p ) return; // wêze³ nie ma dzieci
 	int i = l; // i = l - parent
 	int j = 2 * i + 1; // lewe dziecko wêz³a i w kopcu
 	int temp = tab[i]; // wartoœæ rodzica
@@ -156,7 +159,7 @@ void update( int l, int p, int* tab )  // l - rodzic, p - ostatni elem kopca
 	while( j <= p ) // gdy dziecko <= rodzic
 	{
 		if( j < p ) // je¿eli dziecko < rodzic
-			if( tab[j] <= tab[j + 1] ) //! pytanie czy mo¿na to j++ tu wstawiæ
+			if( tab[j] <= tab[j + 1] )
 				j++;	// wybieramy wiêksze dziecko = lewe lub prawe
 
 		if( tab[j] < temp ) 
