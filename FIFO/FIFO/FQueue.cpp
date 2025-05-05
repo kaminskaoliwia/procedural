@@ -98,7 +98,16 @@ void    FQDel( FQueue* q )             //! removes only first item
   free( temp ); // zwolnienie miejsca
 }
 
-void    FQPrint( FQueue* q, void (__cdecl *freeMem)( const void* ) )
+void FQPrint(FQueue* q)
 {
+  if (FQEmpty(q)) {
+    printf("Kolejka jest pusta.\n");
+    return;
+  }
 
+  FQItem* p = q->pHead;
+  while (p != NULL) {
+    printf("Key: %d\n", p->pInfo->key);  // wypisywanie pola 'key'
+    p = p->pNext;
+  }
 }
