@@ -2,6 +2,11 @@
 #include <iostream>
 #include "FQueue.h"
 
+#define ADDELEM1 4
+#define DELELEM1 3
+#define ADDELEM2 2
+#define DELELEM2 1
+
 /* trzy funkcje: jedna z nich zwalnia pamiêæ (adres trzeba przekazaæ do clear i remove)
 parametry moga byc usuwane przez wywolujacego albo wywolywanego
 __cdecl oznacza ¿e jest usuwane przez wywolujacego 
@@ -28,7 +33,7 @@ int main()
    }
 
     // dodac do kolejki 4 wlwmenty (wydrukowac kolejke)
-   for( int i =1; i<=4; i++ )
+   for( int i =1; i<=ADDELEM1; i++ )
    {
       QINFO* pInfo = allocInfo( i, i+1, i+2 );
       if( !FQEnqueue(q, pInfo) )
@@ -38,12 +43,15 @@ int main()
        }
    }
 
-   FQPrint( q, printInfo );
+   printf("Queue created, added %d elements:\n", ADDELEM1);
+   FQPrint( q );
 
   // usun¹æ 3 elementy
-   for( int i = 0; i++; i<3 )
+   printf("\nDeleting %d elements\n", DELELEM1);
+   for( int i = 0; i < DELELEM1; i++ )
    {
       QINFO* p = FQDequeue( q );
+      printf("\nDeleted item:\n");
       printInfo( p );
       freeInfo( p );
    }
@@ -59,10 +67,16 @@ int main()
      }
    }
 
+   printf("\nAdding to the queue %d elements:\n", ADDELEM2);
+   FQPrint( q );
+
     // wyczyœciæ kolejke
      FQClear( q, freeInfo );
+     printf("\nQueue after clearing:\n");
+     FQPrint( q );
 
      // usun¹æ jeden
+     printf("\nDeleting an element\n");
      QINFO* p = FQDequeue( q );
      printInfo( p );
      freeInfo( p );

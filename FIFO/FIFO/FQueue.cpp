@@ -47,6 +47,8 @@ int    FQEnqueue( FQueue* q, QINFO* p ) // insert new item at the end
   }
 
   q->pTail = pNew; // (*q).pTail = pNew
+
+return 1;
 }
 
 QINFO* FQDequeue( FQueue* q )        //! take out the first item
@@ -76,12 +78,16 @@ void   FQClear( FQueue* q, void(__cdecl* freeMem)(const void*) )          // cle
     FQDel( q );
   }
 
+  while ( !FQEmpty( q ) ) {
+    freeMem( FQDequeue( q ) );
+  }
+
   q->pHead = q->pTail = NULL;
 }
 
 void    FQRemove( FQueue** q, void (__cdecl* freeMem)(const void*) )         // clears the queue  (=QFClear()) and removes
 {
-  FQClear( *q );
+  FQClear( *q, freeMem );
   free( *q ); // zwalnia wskaŸnik q       
 }
 
@@ -95,6 +101,7 @@ void    FQDel( FQueue* q )             //! removes only first item
 
   FQItem* temp = q->pHead; // tymczasowa zmienna wskazujaca na poczatek kolejki
   q->pHead = q->pHead->pNext; // q wskazuje teraz na nastepna
+
   free( temp ); // zwolnienie miejsca
 }
 
