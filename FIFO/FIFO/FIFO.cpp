@@ -2,16 +2,16 @@
 #include <iostream>
 #include "FQueue.h"
 
-#define ADDELEM1 4
-#define DELELEM1 3
-#define ADDELEM2 2
-#define DELELEM2 1
+#define ADD_ELEM_1 4
+#define DEL_ELEM_1 3
+#define ADD_ELEM_2 2
+#define DEL_ELEM_2 1
 
-/* trzy funkcje: jedna z nich zwalnia pamiêæ (adres trzeba przekazaæ do clear i remove)
+/* trzy funkcje: jedna z nich zwalnia pamiÃªÃ¦ (adres trzeba przekazaÃ¦ do clear i remove)
 parametry moga byc usuwane przez wywolujacego albo wywolywanego
-__cdecl oznacza ¿e jest usuwane przez wywolujacego 
+__cdecl oznacza Â¿e jest usuwane przez wywolujacego 
 wywolywanego sciaga to konwencja Pascalowa
-piszemy t¹ kolejkê jakby to by³a biblioteka funkcji (przyk³ad bibliotecznej definicji qsort)
+piszemy tÂ¹ kolejkÃª jakby to byÂ³a biblioteka funkcji (przykÂ³ad bibliotecznej definicji qsort)
 */
 
 // zdefiniowac allocInfo (trzy parametry typu int a, b ,c) do alokacji pamieci informacji - zwraca wskaznik do QInfo
@@ -33,22 +33,22 @@ int main()
    }
 
     // dodac do kolejki 4 wlwmenty (wydrukowac kolejke)
-   for( int i =1; i<=ADDELEM1; i++ )
+   for( int i =1; i<=ADD_ELEM_1; i++ )
    {
       QINFO* pInfo = allocInfo( i, i+1, i+2 );
       if( !FQEnqueue(q, pInfo) )
       {
-        printf("ERROR in EnQueue!!\n");
+        printf("ERROR: EnQueue!!\n");
         return 2;
        }
    }
 
-   printf("Queue created, added %d elements:\n", ADDELEM1);
+   printf("Queue created, added %d elements:\n", ADD_ELEM_1);
    FQPrint( q );
 
-  // usun¹æ 3 elementy
-   printf("\nDeleting %d elements\n", DELELEM1);
-   for( int i = 0; i < DELELEM1; i++ )
+  // usunÂ¹Ã¦ 3 elementy
+   printf("\nDeleting %d elements\n", DEL_ELEM_1);
+   for( int i = 0; i < DEL_ELEM_1; i++ )
    {
       QINFO* p = FQDequeue( q );
       printf("\nDeleted item:\n");
@@ -62,26 +62,26 @@ int main()
      QINFO* pInfo = allocInfo( i, i+1, i+2 );
      if( !FQEnqueue(q, pInfo) )
      {
-       printf("ERROR in EnQueue!!\n");
+       printf("ERROR: EnQueue!!\n");
        return 2;
      }
    }
 
-   printf("\nAdding to the queue %d elements:\n", ADDELEM2);
+   printf("\nAdding to the queue %d elements:\n", ADD_ELEM_2);
    FQPrint( q );
 
-    // wyczyœciæ kolejke
+    // wyczyÅ“ciÃ¦ kolejke
      FQClear( q, freeInfo );
      printf("\nQueue after clearing:\n");
      FQPrint( q );
 
-     // usun¹æ jeden
-     printf("\nDeleting an element\n");
+     // usunÂ¹Ã¦ jeden
+     printf("\nDeleting an element:\n");
      QINFO* p = FQDequeue( q );
      printInfo( p );
      freeInfo( p );
 
-     // usun¹æ ca³¹ kolejkê
+     // usunÂ¹Ã¦ caÂ³Â¹ kolejkÃª
      FQRemove( &q, freeInfo );
 
    return 0;
@@ -89,7 +89,7 @@ int main()
 
 QINFO* allocInfo(int a, int b, int c)
 {
-  QINFO* pNew = ( QINFO*)malloc(sizeof(QINFO) ); // alokuje pamiêæ, pierwszy pusty wskaŸnik
+  QINFO* pNew = ( QINFO*)malloc(sizeof(QINFO) ); // alokuje pamiÃªÃ¦, pierwszy pusty wskaÅ¸nik
   if( !pNew ) return NULL;
 
   pNew->pTab = ( int* )malloc(sizeof(int) * 2 );
@@ -103,7 +103,7 @@ QINFO* allocInfo(int a, int b, int c)
   pNew->pTab[0] = b;
   pNew->pTab[1] = c;
 
-  return pNew; // returnuje pNew typu wskaŸnik do QINFO
+  return pNew; // returnuje pNew typu wskaÅ¸nik do QINFO
 }
 
 void freeInfo( const void *pInfo )
