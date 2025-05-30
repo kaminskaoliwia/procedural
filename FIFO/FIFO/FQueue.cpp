@@ -53,32 +53,40 @@ return 1;
 
 QINFO* FQDequeue( FQueue* q )        //! take out the first item
 {
-  if(FQEmpty( q ) )
+
+  if( FQEmpty( q ) )
   {
     return 0;
   }
 
-  FQItem* temp = q->pHead; // tworzymy nowy skaźnik na pHead o nazwie temp
-  QINFO* value = temp->pInfo; // pobieramy wartość key z tempa i nazywamy tą wartość value
-  q->pHead = q->pHead->pNext; /* (*q).pHead = (*q).pHead.pNext, czyli naszym nowym pHead
-                                   następna wartość*/
-
-  if ( !q->pHead ) {  // jeżeli kolejka stanie się pusta
-    q->pTail = NULL; // (*q).pTail staje się pusta
+  QINFO* value = q->pHead->pInfo; // pobieramy wartość key z tempa i nazywamy tą wartość value
+  //q->pHead = q->pHead->pNext; /* (*q).pHead = (*q).pHead.pNext, czyli naszym nowym pHead następna wartość*/
+  while( !FQEmpty( q ) )
+  {
+    FQDel( q );
   }
-  free( temp ); // zwalniamy pamięć z tempa
+  //if ( !q->pHead ) {  // jeżeli kolejka stanie się pusta
+  //  q->pTail = NULL; // (*q).pTail staje się pusta
+  //? poprawione -> przeniesione do FQDel 
 
   return value; // wartość już usuniętej wartości, która kiedyś była pHead
 }
 
 void   FQClear( FQueue* q, void(__cdecl* freeMem)(const void*) )          // clears the queue
 {
-  while( !FQEmpty( q ) )
+  //! spraq=w q i freemem
+ /* while( !FQEmpty( q ) )
   {
     FQDel( q );
+  }*/
+  //? poprawione
+  if ( !q ) {
+    printf( "FQCLEAR: Kolejka nie istnieje" );
+    return;
   }
 
-  while ( !FQEmpty( q ) ) {
+  while ( !FQEmpty( q ) ) 
+  {
     freeMem( FQDequeue( q ) );
   }
 
@@ -86,9 +94,19 @@ void   FQClear( FQueue* q, void(__cdecl* freeMem)(const void*) )          // cle
 }
 
 void    FQRemove( FQueue** q, void (__cdecl* freeMem)(const void*) )         // clears the queue  (=QFClear()) and removes
-{
+{//!!!q i *q
+  //? poprawione
+  
+  if ( !q || !*q ) {
+    printf( "FQREMOVE: Kolejka nie istnieje.\n" );
+    return;
+  }
+
   FQClear( *q, freeMem );
-  free( *q ); // zwalnia wskaźnik q       
+  free( *q ); // zwalnia wskaźnik q      
+  *q = NULL;
+//!!! wynuloWAC KOLEJKE
+//? poprawione
 }
 
 void    FQDel( FQueue* q )             //! removes only first item
@@ -101,8 +119,13 @@ void    FQDel( FQueue* q )             //! removes only first item
 
   FQItem* temp = q->pHead; // tymczasowa zmienna wskazujaca na poczatek kolejki
   q->pHead = q->pHead->pNext; // q wskazuje teraz na nastepna
-
+  //if
   free( temp ); // zwolnienie miejsca
+
+  if ( FQEmpty( q ) )
+  {
+    q->pTail = NULL; //!przeniesione z FQDequeue
+  }
 }
 
 void FQPrint(FQueue* q)

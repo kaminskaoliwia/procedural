@@ -55,9 +55,11 @@ int main()
       printInfo( p );
       freeInfo( p );
    }
+   printf( "\nQueue after deleting %d elements:\n", DEL_ELEM_1 );
+   FQPrint( q );
 
    // dodac dwa elementy (wydrukowac kolejke) 
-   for( int i = 0; i < 3; i++ )
+   for( int i = 0; i < ADD_ELEM_2; i++ )
    {
      QINFO* pInfo = allocInfo( i, i+1, i+2 );
      if( !FQEnqueue(q, pInfo) )
@@ -77,9 +79,7 @@ int main()
 
      // usun¹æ jeden
      printf("\nDeleting an element:\n");
-     QINFO* p = FQDequeue( q );
-     printInfo( p );
-     freeInfo( p );
+     FQDel( q );
 
      // usun¹æ ca³¹ kolejkê
      FQRemove( &q, freeInfo );
