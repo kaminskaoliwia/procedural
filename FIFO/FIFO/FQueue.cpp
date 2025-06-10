@@ -28,7 +28,7 @@ int    FQEnqueue( FQueue* q, QINFO* p ) // insert new item at the end
 {
   if( !q ) return 0; // jeżeli kolejka nie istnieje to nie
 
-  //! memory allocation
+  // memory allocation
   FQItem* pNew = (FQItem*)malloc(sizeof(FQItem) );
   if( !pNew ) { // jeżeli nie ma miejsca
     return 0;
@@ -84,6 +84,11 @@ void   FQClear( FQueue* q, void(__cdecl* freeMem)(const void*) )          // cle
     return;
   }
 
+  if (!freeMem) {
+    printf("FQCLEAR: Funkcja freeMem jest NULL\n");
+    return;
+  }
+
   while ( !FQEmpty( q ) ) 
   {
     freeMem( FQDequeue( q ) );
@@ -110,16 +115,17 @@ void    FQRemove( FQueue** q, void (__cdecl* freeMem)(const void*) )         // 
 
 void    FQDel( FQueue* q )             //! removes only first item
 {
-  if(FQEmpty( q ) )
+  if( FQEmpty( q ) )
   {
-    printf("\nFQDEL: Kolejka jest pusta.\n");
+    printf("\nFQDEL: Kolejka jest pusta lub nie istnieje.\n");
     return;
   }
 
   FQItem* temp = q->pHead; // tymczasowa zmienna wskazujaca na poczatek kolejki
-  q->pHead = q->pHead->pNext; // q wskazuje teraz na nastepna
-  //if
-  free( temp ); // zwolnienie miejsca
+  q->pHead = temp->pNext; // q wskazuje teraz na nastepna
+
+  free(temp); // zwolnienie pamięci
+ 
 
   if ( FQEmpty( q ) )
   {
@@ -127,16 +133,16 @@ void    FQDel( FQueue* q )             //! removes only first item
   }
 }
 
-void FQPrint(FQueue* q)
+void FQPrint( FQueue* q, void(__cdecl* printInfo )(const void*) )
 {
-  if (FQEmpty(q)) {
-    printf("\nFQPRINT: Kolejka jest pusta.\n");
+  if (FQEmpty(q) || !printInfo ) {
+    printf("\nFQPRINT: Kolejka jest pusta lub nie istnieje lub nie ma funkcji.\n");
     return;
   }
 
   FQItem* p = q->pHead;
   while (p != NULL) {
-    printf("Key: %d\n", p->pInfo->key);  // wypisywanie pola 'key'
+    printInfo(p->pInfo);  // wypisywanie pola 'key'
     p = p->pNext;
   }
 }

@@ -36,15 +36,21 @@ int main()
    for( int i =1; i<=ADD_ELEM_1; i++ )
    {
       QINFO* pInfo = allocInfo( i, i+1, i+2 );
+      if( !pInfo )
+      {
+        printf("ERROR: memory allocation!!\n");
+        return 2;
+      }
+
       if( !FQEnqueue(q, pInfo) )
       {
         printf("ERROR: EnQueue!!\n");
-        return 2;
+        return 3;
        }
    }
 
    printf("Queue created, added %d elements:\n", ADD_ELEM_1);
-   FQPrint( q );
+   FQPrint( q, printInfo );
 
   // usun¹æ 3 elementy
    printf("\nDeleting %d elements\n", DEL_ELEM_1);
@@ -56,30 +62,38 @@ int main()
       freeInfo( p );
    }
    printf( "\nQueue after deleting %d elements:\n", DEL_ELEM_1 );
-   FQPrint( q );
+   FQPrint( q, printInfo );
+
+   FQClear( q, freeInfo );
+   printf("\nQueue after clearing:\n");
+   FQPrint( q, printInfo );
+
 
    // dodac dwa elementy (wydrukowac kolejke) 
    for( int i = 0; i < ADD_ELEM_2; i++ )
    {
      QINFO* pInfo = allocInfo( i, i+1, i+2 );
+     if( !pInfo ) {
+       printf( "ERROR: memory allocation error or queue does not exist!!" );
+       return 4;
+     }
      if( !FQEnqueue(q, pInfo) )
      {
        printf("ERROR: EnQueue!!\n");
-       return 2;
+       return 5;
      }
    }
 
    printf("\nAdding to the queue %d elements:\n", ADD_ELEM_2);
-   FQPrint( q );
+   FQPrint( q, printInfo );
 
     // wyczyœciæ kolejke
-     FQClear( q, freeInfo );
-     printf("\nQueue after clearing:\n");
-     FQPrint( q );
-
+   
      // usun¹æ jeden
      printf("\nDeleting an element:\n");
-     FQDel( q );
+     QINFO* p = FQDequeue( q );
+     printInfo( p );
+     freeInfo( p );
 
      // usun¹æ ca³¹ kolejkê
      FQRemove( &q, freeInfo );
@@ -115,6 +129,7 @@ void freeInfo( const void *pInfo )
 
 void printInfo( const void *pInfo )
 {
+  if ( !pInfo ) return;
   printf( "key = %d pTab[0] = %d pTab[1] = %d\n",
     ((QINFO*)pInfo)->key,
     ((QINFO*)pInfo)->pTab[0],
