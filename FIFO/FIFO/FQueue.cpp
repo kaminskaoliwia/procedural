@@ -61,10 +61,9 @@ QINFO* FQDequeue( FQueue* q )        //! take out the first item
 
   QINFO* value = q->pHead->pInfo; // pobieramy wartość key z tempa i nazywamy tą wartość value
   //q->pHead = q->pHead->pNext; /* (*q).pHead = (*q).pHead.pNext, czyli naszym nowym pHead następna wartość*/
-  while( !FQEmpty( q ) )
-  {
-    FQDel( q );
-  }
+ 
+  FQDel( q );
+
   //if ( !q->pHead ) {  // jeżeli kolejka stanie się pusta
   //  q->pTail = NULL; // (*q).pTail staje się pusta
   //? poprawione -> przeniesione do FQDel 
